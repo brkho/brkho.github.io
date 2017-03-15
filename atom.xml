@@ -4,7 +4,7 @@
  <title>beep boop</title>
  <link href="http://blog.brkho.comhttps://brkho.github.io/atom.xml" rel="self"/>
  <link href="http://blog.brkho.comhttps://brkho.github.io/"/>
- <updated>2017-03-15T06:30:48-07:00</updated>
+ <updated>2017-03-15T13:17:54-07:00</updated>
  <id>http://blog.brkho.com</id>
  <author>
    <name>Brian Ho</name>
@@ -13,10 +13,10 @@
 
  
  <entry>
-   <title>Client-server web games with WebRTC</title>
-   <link href="http://blog.brkho.com/2017/03/15/client-server-web-games-webrtc/"/>
+   <title>A comprehensive dive into WebRTC for client-server web games</title>
+   <link href="http://blog.brkho.com/2017/03/15/dive-into-client-server-web-games-webrtc/"/>
    <updated>2017-03-15T00:00:00-07:00</updated>
-   <id>http://blog.brkho.comhttps://brkho.github.io/2017/03/15/client-server-web-games-webrtc</id>
+   <id>http://blog.brkho.comhttps://brkho.github.io/2017/03/15/dive-into-client-server-web-games-webrtc</id>
    <content type="html">&lt;p&gt;Multiplayer games are fun. For what they lack in single player immersion, online games compensate with uniquely rewarding experiences in questing with friends, meeting strangers online, and clashing head to head against competent peers. One needs to look no further than the giants of League of Legends, Hearthstone, and Overwatch to realize the mass demand for multiplayer games.&lt;sup&gt;1&lt;/sup&gt; While these franchises are successful, however, they have significant barriers to entry in their multi-gigabyte game clients. Sure, an installation won’t deter a hardcore gamer, but for the many casual players out there, the extra step is a non-starter.&lt;/p&gt;
 
 &lt;p&gt;For this reason, web games have enormous potential when it comes to massively multiplayer experiences. While downloading and installing a client might be too much for some, playing a game by simply &lt;em&gt;visiting&lt;/em&gt; a web page is low-friction and conducive to virality. I’m currently building such a game, and in this blog post, I’d like to share my experiences in establishing a raw connection between a browser and the game server.&lt;/p&gt;
@@ -510,9 +510,9 @@ make install
 
 &lt;p&gt;In the second test, I sent pings at the same rate for the same duration, but I also used a traffic shaper to drop 5% of outgoing packets and 5% of incoming packets. Again, I tested on both WebRTC and WebSockets.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://blog.brkho.com/public/images/packet-loss.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.brkho.com/public/images/packet-loss.png&quot; alt=&quot;Packet loss&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Admittedly, a 5% drop rate is a bit exaggerated, but the results here are striking. Since we are trasmitting in unreliable SCTP for WebRTC, the distribution of RTT is completely unaffected. We dropped around 40 packets, but in the context of a game where the server sends state 20 times a second, this is a non-issue. The WebSocket implementation, on the other hand, has a long tail with some packets not arriving for over 900ms. Even worse, a very large percentage of packets had a RTT of over 250ms which would result in an extremely annoying experience that any gamer can attest to.&lt;/p&gt;
+&lt;p&gt;Admittedly, a 5% drop rate is a bit exaggerated, but the results are striking regardless. Since we are trasmitting in unreliable SCTP for WebRTC, the distribution of RTT is completely unaffected. We dropped around 40 packets, but in the context of a game where the server sends state 20 times a second, this is a non-issue. The WebSocket implementation, on the other hand, has a long tail with some packets not arriving for over 900ms. Even worse, a very large percentage of packets had a RTT of over 250ms which would result in an extremely annoying experience that any gamer can attest to.&lt;/p&gt;
 
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Though it took a lot of persistence, we were eventually able to shoehorn WebRTC into a client-server architecture. We implemented an example of a data channel connection that performs vastly better than WebSockets for both perfect connections and networks with packet loss. The example code, however, is largely illustrative and contains a whole host of suboptimal patterns. In addition to the global variables littered throughout the code, the server also contains a glaring inefficiency in its immediate handling of data channel messages in the &lt;code class=&quot;highlighter-rouge&quot;&gt;OnDataChannelMessage&lt;/code&gt; callback. The cost of doing so in our example is negligible, but in an actual game server, the message handler will be a more costly function that must interact with state. The message handling function will then block the signaling thread from processing any other messages on the wire during its execution. To avoid this, I recommend pushing all messages onto a thread-safe message queue, and during the next game tick, the main game loop running in a different thread can process the network messages in batch. I use &lt;a href=&quot;https://github.com/facebook/folly/blob/master/folly/ProducerConsumerQueue.h&quot;&gt;Facebook’s lock-free queue&lt;/a&gt; in my own game server for this. For ideas on how to better organize your game around WebRTC, feel free to take a look at my &lt;a href=&quot;https://github.com/brkho/archipelago-server&quot;&gt;server code&lt;/a&gt; and &lt;a href=&quot;https://github.com/brkho/archipelago-client&quot;&gt;client code&lt;/a&gt;.&lt;/p&gt;

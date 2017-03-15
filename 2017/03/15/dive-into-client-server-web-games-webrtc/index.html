@@ -11,7 +11,7 @@
 
   <title>
     
-      Client-server web games with WebRTC &middot; beep boop
+      A comprehensive dive into WebRTC for client-server web games &middot; beep boop
     
   </title>
 
@@ -101,7 +101,7 @@
 
       <div class="container content">
         <div class="post">
-  <h1 class="post-title">Client-server web games with WebRTC</h1>
+  <h1 class="post-title">A comprehensive dive into WebRTC for client-server web games</h1>
   <span class="post-date">15 Mar 2017</span>
   <p>Multiplayer games are fun. For what they lack in single player immersion, online games compensate with uniquely rewarding experiences in questing with friends, meeting strangers online, and clashing head to head against competent peers. One needs to look no further than the giants of League of Legends, Hearthstone, and Overwatch to realize the mass demand for multiplayer games.<sup>1</sup> While these franchises are successful, however, they have significant barriers to entry in their multi-gigabyte game clients. Sure, an installation won’t deter a hardcore gamer, but for the many casual players out there, the extra step is a non-starter.</p>
 
@@ -596,9 +596,9 @@ make install
 
 <p>In the second test, I sent pings at the same rate for the same duration, but I also used a traffic shaper to drop 5% of outgoing packets and 5% of incoming packets. Again, I tested on both WebRTC and WebSockets.</p>
 
-<p><img src="http://blog.brkho.com/public/images/packet-loss.png" /></p>
+<p><img src="http://blog.brkho.com/public/images/packet-loss.png" alt="Packet loss" /></p>
 
-<p>Admittedly, a 5% drop rate is a bit exaggerated, but the results here are striking. Since we are trasmitting in unreliable SCTP for WebRTC, the distribution of RTT is completely unaffected. We dropped around 40 packets, but in the context of a game where the server sends state 20 times a second, this is a non-issue. The WebSocket implementation, on the other hand, has a long tail with some packets not arriving for over 900ms. Even worse, a very large percentage of packets had a RTT of over 250ms which would result in an extremely annoying experience that any gamer can attest to.</p>
+<p>Admittedly, a 5% drop rate is a bit exaggerated, but the results are striking regardless. Since we are trasmitting in unreliable SCTP for WebRTC, the distribution of RTT is completely unaffected. We dropped around 40 packets, but in the context of a game where the server sends state 20 times a second, this is a non-issue. The WebSocket implementation, on the other hand, has a long tail with some packets not arriving for over 900ms. Even worse, a very large percentage of packets had a RTT of over 250ms which would result in an extremely annoying experience that any gamer can attest to.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 <p>Though it took a lot of persistence, we were eventually able to shoehorn WebRTC into a client-server architecture. We implemented an example of a data channel connection that performs vastly better than WebSockets for both perfect connections and networks with packet loss. The example code, however, is largely illustrative and contains a whole host of suboptimal patterns. In addition to the global variables littered throughout the code, the server also contains a glaring inefficiency in its immediate handling of data channel messages in the <code class="highlighter-rouge">OnDataChannelMessage</code> callback. The cost of doing so in our example is negligible, but in an actual game server, the message handler will be a more costly function that must interact with state. The message handling function will then block the signaling thread from processing any other messages on the wire during its execution. To avoid this, I recommend pushing all messages onto a thread-safe message queue, and during the next game tick, the main game loop running in a different thread can process the network messages in batch. I use <a href="https://github.com/facebook/folly/blob/master/folly/ProducerConsumerQueue.h">Facebook’s lock-free queue</a> in my own game server for this. For ideas on how to better organize your game around WebRTC, feel free to take a look at my <a href="https://github.com/brkho/archipelago-server">server code</a> and <a href="https://github.com/brkho/archipelago-client">client code</a>.</p>
