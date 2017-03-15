@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>beep boop</title>
- <link href="http://localhost:4000https://brkho.github.io/atom.xml" rel="self"/>
- <link href="http://localhost:4000https://brkho.github.io/"/>
- <updated>2017-03-15T05:51:33-07:00</updated>
- <id>http://localhost:4000</id>
+ <link href="http://blog.brkho.comhttps://brkho.github.io/atom.xml" rel="self"/>
+ <link href="http://blog.brkho.comhttps://brkho.github.io/"/>
+ <updated>2017-03-15T06:30:48-07:00</updated>
+ <id>http://blog.brkho.com</id>
  <author>
    <name>Brian Ho</name>
    <email>brian@brkho.com</email>
@@ -14,9 +14,9 @@
  
  <entry>
    <title>Client-server web games with WebRTC</title>
-   <link href="http://localhost:4000/2017/03/15/client-server-web-games-webrtc/"/>
+   <link href="http://blog.brkho.com/2017/03/15/client-server-web-games-webrtc/"/>
    <updated>2017-03-15T00:00:00-07:00</updated>
-   <id>http://localhost:4000https://brkho.github.io/2017/03/15/client-server-web-games-webrtc</id>
+   <id>http://blog.brkho.comhttps://brkho.github.io/2017/03/15/client-server-web-games-webrtc</id>
    <content type="html">&lt;p&gt;Multiplayer games are fun. For what they lack in single player immersion, online games compensate with uniquely rewarding experiences in questing with friends, meeting strangers online, and clashing head to head against competent peers. One needs to look no further than the giants of League of Legends, Hearthstone, and Overwatch to realize the mass demand for multiplayer games.&lt;sup&gt;1&lt;/sup&gt; While these franchises are successful, however, they have significant barriers to entry in their multi-gigabyte game clients. Sure, an installation won’t deter a hardcore gamer, but for the many casual players out there, the extra step is a non-starter.&lt;/p&gt;
 
 &lt;p&gt;For this reason, web games have enormous potential when it comes to massively multiplayer experiences. While downloading and installing a client might be too much for some, playing a game by simply &lt;em&gt;visiting&lt;/em&gt; a web page is low-friction and conducive to virality. I’m currently building such a game, and in this blog post, I’d like to share my experiences in establishing a raw connection between a browser and the game server.&lt;/p&gt;
@@ -525,7 +525,7 @@ make install
 
 &lt;p&gt;Despite these setbacks, the WebRTC data channel is still a powerful tool which can be leveraged to improve the responsiveness of many web games. I’m excited about the future of WebRTC adoption and hopeful that it will usher in the next generation of massively multiplayer browser experiences.&lt;/p&gt;
 
-&lt;p&gt;Thanks for reading, and if you have any questions, please feel free to contact me or leave a comment below!&lt;/p&gt;
+&lt;p&gt;Thanks for reading, and if you have any questions, please feel free to &lt;a href=&quot;http://blog.brkho.com/about/&quot;&gt;contact me&lt;/a&gt; or leave a comment below!&lt;/p&gt;
 
 &lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
 &lt;ol&gt;
