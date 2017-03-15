@@ -1,0 +1,33 @@
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+
+# Setup
+title:               beep boop
+tagline:             'a game development blog'
+description:         "Hi, I'm <a href='https://twitter.com/brkhoot'>Brian</a>! Here you'll find my general musings on game development and updates on a browser game that I'm building out in my spare time."
+url:                 http://blog.brkho.com
+baseurl:             ''
+paginate:            5
+
+# About/contact
+author:
+  name:              Brian Ho
+  url:               https://brkho.com
+  email:             brian@brkho.com
+
+github:
+  repo:              https://github.com/brkho/brkho.github.io
+
+# Custom vars
+version:             1.0.0
+
+gems: [jekyll-paginate]
+baseurl: "https://brkho.github.io"
+production_url : http://blog.brkho.com
+BASE_PATH : http://blog.brkho.com
+future: true
+
+markdown: kramdown
+highlighter: rouge
