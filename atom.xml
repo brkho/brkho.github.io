@@ -4,7 +4,7 @@
  <title>beep boop</title>
  <link href="http://blog.brkho.comhttps://brkho.github.io/atom.xml" rel="self"/>
  <link href="http://blog.brkho.comhttps://brkho.github.io/"/>
- <updated>2017-03-15T14:10:35-07:00</updated>
+ <updated>2017-03-16T19:56:23-07:00</updated>
  <id>http://blog.brkho.com</id>
  <author>
    <name>Brian Ho</name>
@@ -76,7 +76,7 @@
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;webrtc-in-a-client-server-model&quot;&gt;WebRTC in a client-server model&lt;/h2&gt;
-&lt;p&gt;At the end of the day, we can just treat the game client as “Client 1” and the game server as “Client 2” and follow the complicated, but well-defined WebRTC protocol to establish a client-server connection. Implementing the WebRTC connection on the client straightforward; WebRTC is first and foremost a browser API, so we can just call the correct functions that most modern browsers provide.&lt;/p&gt;
+&lt;p&gt;At the end of the day, we can just treat the game client as “Client 1” and the game server as “Client 2” and follow the complicated, but well-defined WebRTC protocol to establish a client-server connection. Implementing the WebRTC connection on the client is straightforward; WebRTC is first and foremost a browser API, so we can just call the correct functions that most modern browsers provide.&lt;/p&gt;
 
 &lt;p&gt;While WebRTC has fairly decent browser support, using the WebRTC API on the server is a completely different story. For some personal flavor, I was originally writing my game server in JavaScript with Node.js. I started out using &lt;a href=&quot;https://github.com/js-platform/node-webrtc/&quot;&gt;node-webrtc&lt;/a&gt; which is a JavaScript wrapper around the Chromium WebRTC library. However, I soon found that &lt;code class=&quot;highlighter-rouge&quot;&gt;node-webrtc&lt;/code&gt; depends on extremely old WebRTC binaries that use an outdated SDP handshake incompatible with modern Chrome&lt;sup&gt;10&lt;/sup&gt;. I then pivoted to &lt;a href=&quot;https://github.com/mappum/electron-webrtc&quot;&gt;electron-webrtc&lt;/a&gt; which simply runs a headless electron client in the background that offers its WebRTC capabilities through interprocess communication. I was able to get a basic connection going with &lt;code class=&quot;highlighter-rouge&quot;&gt;electron-webrtc&lt;/code&gt; without much difficulty, but I had concerns about its scalability resulting from the extra overhead in shuffling data between the main process and a full-fledged electron application.&lt;/p&gt;
 
@@ -93,7 +93,7 @@
 
 &lt;p&gt;Next we have to build and install &lt;a href=&quot;https://chromium.googlesource.com/external/webrtc&quot;&gt;Chromium’s WebRTC library&lt;/a&gt;. This is the library used in Chrome for its WebRTC functionality, so it’s guaranteed to be correct and efficient. I originally built it from scratch, but this is a pain because you need to clone the repo, build with the Chromium-specific build tools, and place the output into the shared libraries folder. I recently found a &lt;a href=&quot;https://github.com/aisouard/libwebrtc&quot;&gt;nice collection of scripts&lt;/a&gt; that do the heavy lifting for you which I highly recommend using for your own sanity.&lt;/p&gt;
 
-&lt;p&gt;Even with this convenient utility, I still ran into issues when the most recent commit on Chromium master failed to build on my machine. I had to go a few commits back before finding a green build. I settled on commit &lt;code class=&quot;highlighter-rouge&quot;&gt;3dda246b69&lt;/code&gt;, so Ii you have trouble building WebRTC, I recommend starting with the same commit hash. If you’re using aisouard’s &lt;code class=&quot;highlighter-rouge&quot;&gt;libwebrtc&lt;/code&gt; scripts linked above, the way to specify a commit of WebRTC to build unfortunately has changed since I first started using it. As such, I’ve locked my server setup process to use commit &lt;code class=&quot;highlighter-rouge&quot;&gt;83814ef6f3&lt;/code&gt; of the &lt;code class=&quot;highlighter-rouge&quot;&gt;libwebrtc&lt;/code&gt; scripts, so &lt;code class=&quot;highlighter-rouge&quot;&gt;checkout&lt;/code&gt; that revision if you want to follow along. All said and done, you can install WebRTC in just a few commands:&lt;/p&gt;
+&lt;p&gt;Even with this convenient utility, I still ran into issues when the most recent commit on Chromium master failed to build on my machine. I had to go a few commits back before finding a green build. I settled on commit &lt;code class=&quot;highlighter-rouge&quot;&gt;3dda246b69&lt;/code&gt;, so if you have trouble building WebRTC, I recommend starting with the same commit hash. If you’re using aisouard’s &lt;code class=&quot;highlighter-rouge&quot;&gt;libwebrtc&lt;/code&gt; scripts linked above, the way to specify a commit of WebRTC to build unfortunately has changed since I first started using it. As such, I’ve locked my server setup process to use commit &lt;code class=&quot;highlighter-rouge&quot;&gt;83814ef6f3&lt;/code&gt; of the &lt;code class=&quot;highlighter-rouge&quot;&gt;libwebrtc&lt;/code&gt; scripts, so &lt;code class=&quot;highlighter-rouge&quot;&gt;checkout&lt;/code&gt; that revision if you want to follow along. All said and done, you can install WebRTC in just a few commands:&lt;/p&gt;
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install build-essential libglib2.0-dev libgtk2.0-dev libxtst-dev &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
   libxss-dev libpci-dev libdbus-1-dev libgconf2-dev &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
   libgnome-keyring-dev libnss3-dev libasound2-dev libpulse-dev &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
@@ -502,11 +502,11 @@ make install
 &lt;h2 id=&quot;benchmarks&quot;&gt;Benchmarks&lt;/h2&gt;
 &lt;p&gt;Whew, that was a lot of concepts and code just to establish a simple connection. Initializing a similar connection with WebSockets only takes around 10 lines of client code and 20 lines of server code. Given this disparity in upfront costs, is WebRTC with its associated boilerplate even worth it? I ran some benchmarks to find out.&lt;/p&gt;
 
-&lt;p&gt;In the first test, I sent 10 pings a second from the client to the server for 20 seconds and measured the round trip time. I did this on a “perfect connection” with no packet loss for both WebRTC data channels (SCTP) and a simple WebSockets connection (TCP).&lt;/p&gt;
+&lt;p&gt;In the first test, I sent 20 pings a second from the client to the server for 20 seconds and measured the round trip time. I did this on a “perfect connection” with no packet loss for both WebRTC data channels (SCTP) and a simple WebSockets connection (TCP).&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://blog.brkho.com/public/images/no-packet-loss.png&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;As expected, in the absence of packet loss, both WebRTC and WebSockets perform acceptably with WebRTC RTT clustered around 40-50ms and WebSockets averaging around 80-90ms. There is some definitely amount of overhead in the TCP protocol, but for most games, an extra 50ms or so won’t make or break the player experience.&lt;/p&gt;
+&lt;p&gt;As expected, in the absence of packet loss, both WebRTC and WebSockets perform acceptably with WebRTC RTT clustered around 40-50ms and WebSockets averaging around 80-90ms. There is definitely some amount of overhead in the TCP protocol, but for most games, an extra 50ms or so won’t make or break the player experience.&lt;/p&gt;
 
 &lt;p&gt;In the second test, I sent pings at the same rate for the same duration, but I also used a traffic shaper to drop 5% of outgoing packets and 5% of incoming packets. Again, I tested on both WebRTC and WebSockets.&lt;/p&gt;
 
